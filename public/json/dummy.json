@@ -1,0 +1,6 @@
+{
+    "normal": 0.10, 
+    "covid19": 0.80,
+    "viral": 0.7,
+    "bacterial": 0.3
+}

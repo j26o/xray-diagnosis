@@ -1,32 +1,99 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
+  <main id="app">
+    <header class="ribbon">
+      <span class="ribbon-inner">
+        <img class="logo" alt="DARC" src="./assets/darc.png" />
+        <img class="logo" alt="TMC" src="./assets/Medical-City-logo.jpg" />
+        <img class="logo" alt="DG" src="./assets/DG-resized.png" />
+      </span>
+    </header>
     <router-view />
-  </div>
+  </main>
 </template>
 
 <style lang="scss">
+@import "./scss/styles.scss";
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+  width: 100vw;
+  max-width: 1200px;
+  min-height: 100vh;
+  margin: 0 auto;
+  position: relative;
+
+  color: #333;
 }
 
-#nav {
-  padding: 30px;
+.ribbon {
+  position: absolute;
+  top:0;
+  left: 0;
+  background-color: $ribbon-background-color;
+  color: $ribbon-stroke-color;
+  display: inline-block;
+  width: $ribbon-tri-width;
+  text-decoration: none;
+  padding: 0 #{$ribbon-tri-padding} #{$ribbon-tri-padding / 2};
+  text-align: center;
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+  box-shadow: 2px 2px 3px rgba(0,0,0,0.2);
 
-    &.router-link-exact-active {
-      color: #42b983;
+  &:after {
+    content: '';
+    display: block;
+    width:0;
+    height:0;
+    border-style: solid;
+    border-color: $ribbon-background-color transparent transparent transparent;
+    border-width: #{$ribbon-tri-height - ($ribbon-tri-padding / 2) } #{$ribbon-tri-width / 2} 0 #{$ribbon-tri-width / 2};
+
+    position: absolute;
+    top: 100%;
+    left: 0;
+  }
+}
+
+.ribbon-inner {
+    display: block;
+    border-left: 1px solid $ribbon-stroke-color;
+    border-right: 1px solid $ribbon-stroke-color;
+    position: relative;
+    height: 100%;
+    padding: 2rem 1rem;
+
+    &:before,
+    &:after {
+        content: '';
+        display: block;
+
+        //css triangle
+        width:0;
+        height:0;
+        border-style: solid;
+        border-color: $ribbon-background-color transparent transparent transparent;
+        border-width: #{$ribbon-tri-height -$ribbon-tri-padding} #{($ribbon-tri-width / 2) - $ribbon-tri-padding} 0 #{($ribbon-tri-width / 2) - $ribbon-tri-padding};
+        margin-top: -1px;
+
+        position: absolute;
+        top: 100%;
+        left: -1px;
+        z-index: 5;
     }
+
+
+    &:before {
+        border-color: $ribbon-stroke-color transparent transparent transparent;
+        border-width: #{$ribbon-tri-height -$ribbon-tri-padding} #{($ribbon-tri-width / 2) - $ribbon-tri-padding} 0 #{($ribbon-tri-width / 2) - $ribbon-tri-padding};
+        margin-top: 0;
+    }
+}
+
+.logo {
+  width: 100%;
+  height: auto;
+  margin: 0.3rem auto;
+
+  &:first-of-type {
+    margin-bottom: 0.5rem;
   }
 }
 </style>

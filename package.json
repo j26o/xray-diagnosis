@@ -1,6 +1,7 @@
 {
-  "name": "xray-ui",
+  "name": "covid19-xray-reader",
   "version": "0.1.0",
+  "title": "X-Ray Diagnosis",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -8,10 +9,12 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "register-service-worker": "^1.7.1",
     "vue": "^2.6.11",
-    "vue-router": "^3.2.0"
+    "vue-router": "^3.2.0",
+    "vue2-dropzone": "^3.6.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
