@@ -1,22 +1,39 @@
 <template>
   <div class="layout">
     <section id="step1" class="section">
-      <h1 class="title">Step 1: <span>Input patient details</span></h1>
-      <input class="input" type="text" name="patientNo" id="patientNo" v-model="patientNo" placeholder="Patient Number">
-      <input class="input" type="text" name="xrayNo" id="xrayNo" v-model="xrayNo" placeholder="X-Ray Number">
-      <input class="input" type="text" name="wbc" id="wbc" v-model="wbc" placeholder="White Blood Count">
-      <input class="input" type="text" name="temp" id="temp" v-model="temp" placeholder="Temperature">
-      <input class="input" type="text" name="lung" id="lung" v-model="lung" placeholder="Lung Findings">
-    </section>
-    <section id="step2" class="section">
-      <h1 class="title">Step 2: <span>Upload X-Ray Image</span></h1>
-      <vue-dropzone ref="dropzone" id="dropzone" :options="dropzoneOptions" :useCustomSlot="true" v-on:vdropzone-file-added="fileAdded" v-on:vdropzone-sending="sendingRecord">
+      <h1 class="title">Step 1: <span>Upload X-Ray Image</span></h1>
+      <!-- <vue-dropzone ref="dropzone" id="dropzone" 
+        :options="dropzoneOptions" 
+        :useCustomSlot="true" 
+        v-on:vdropzone-file-added="fileAdded" 
+        v-on:vdropzone-sending="sendingRecord" 
+        v-on:vdropzone-success="uploadSuccess" 
+        v-on:vdropzone-complete="uploadComplete" 
+        :awss3="awss3" 
+        v-on:vdropzone-s3-upload-error="uploadError" 
+        v-on:vdropzone-s3-upload-success="uploadSuccess"> -->
+      <vue-dropzone ref="dropzone" id="dropzone" 
+        :options="dropzoneOptions" 
+        :useCustomSlot="true" 
+        v-on:vdropzone-file-added="fileAdded" 
+        v-on:vdropzone-sending="sendingRecord" 
+        v-on:vdropzone-success="uploadSuccess" 
+        v-on:vdropzone-complete="uploadComplete">
         <div class="dropzone-custom-content">
           <h3 class="dropzone-custom-title">Drag and drop X-Ray image</h3>
           <div class="subtitle">or click to select a file</div>
         </div>
         <div class="dropzone-previews"></div>
       </vue-dropzone>
+    </section>
+    <section id="step2" class="section">
+      <h1 class="title">Step 2: <span>Input patient details</span></h1>
+      <input class="input" type="text" name="patientNo" id="patientNo" v-model="patientNo" placeholder="Patient Number">
+      <input class="input" type="text" name="xrayNo" id="xrayNo" v-model="xrayNo" placeholder="X-Ray Number">
+      <input class="input" type="text" name="wbc" id="wbc" v-model="wbc" placeholder="White Blood Count">
+      <input class="input" type="text" name="temp" id="temp" v-model="temp" placeholder="Temperature">
+      <input class="input" type="text" name="lung" id="lung" v-model="lung" placeholder="Lung Findings">
+      <input class="input" type="hidden" name="imgurl" id="imgUrl" v-model="fileurl">
       <div class="error" v-html="error"></div>
       <button class="btn" type="submit" v-on:click="submit">Analyze</button>
     </section>
@@ -37,27 +54,41 @@
 <script>
 import vue2Dropzone from 'vue2-dropzone'
 import 'vue2-dropzone/dist/vue2Dropzone.min.css'
-import axios from "axios"
+import axios from 'axios'
 
 // @ is an alias to /src
 export default {
-  name: "Home",
+  name: 'Home',
   components: {
     vueDropzone: vue2Dropzone
   },
   data: ()=> {
     return {
       hasResult: false,
+      bucket: 'https://cherish-cxr.s3-ap-southeast-1.amazonaws.com',
+      folder: 'images_png',
+      fileurl: '',
+      findings: 'https://54.255.248.146:8000/findings',
       dropzoneOptions: {
-          url: 'http://localhost:8080/',
-          headers: { "Access-Control-Allow-Origin": "*" },
+          url: 'https://cherish-cxr.s3-ap-southeast-1.amazonaws.com',
+          // headers: { "Access-Control-Allow-Origin": "*" },
+          headers: { 
+            'Access-Control-Allow-Origin': '*',
+          },
           thumbnailWidth: 150,
           maxFilesize: 100,
           maxFiles: 1,
-          acceptedFiles: 'image/png, image/jpeg',
-          autoProcessQueue: false,
+          acceptedFiles: 'image/png, image/jpeg, */dicom,.dcm, image/dcm, */dcm, .dicom',
+          // autoProcessQueue: false,
           addRemoveLinks: true,
           parallelUploads: 1
+      },
+      awss3: {
+        signingURL: 'https://cherish-cxr.s3-ap-southeast-1.amazonaws.com/',
+        headers: {},
+        params : {},
+        sendFileToServer : true,
+        withCredentials: false
       },
       patientNo: '',
       xrayNo: '',
@@ -91,7 +122,7 @@ export default {
           .then(response => this.result = response.data)
 
       } else {
-        if(this.error.length == 0) dropzone.processQueue()
+        // if(this.error.length == 0) dropzone.processQueue()
       }
     },
     fileAdded: function(file) {
@@ -104,11 +135,30 @@ export default {
       }
     },
     sendingRecord: function(file, xhr, formData) {
-      formData.append('patientNo', this.patientNo)
-      formData.append('xrayNo', this.xrayNo)
-      formData.append('wbc', this.wbc)
-      formData.append('temp', this.temp)
-      formData.append('lung', this.lung)
+      console.log('sending:')
+      console.log(file)
+      console.log(xhr)
+      console.log(formData)
+      formData.append('key', `${this.folder}/${file.name}`)
+      // formData.append('filename', `images_png/${file.name}`)
+      // formData.append('file', file)
+      
+      // formData.append('xrayNo', this.xrayNo)
+      // formData.append('wbc', this.wbc)
+      // formData.append('temp', this.temp)
+      // formData.append('lung', this.lung)
+    },
+    uploadSuccess: function(file, res) {
+      console.log('success:')
+      console.log(file)
+      console.log(res)
+    },
+    uploadComplete: function(file) {
+      console.log('complete:', file)
+      this.fileurl = `${this.bucket}/${this.folder}/${file.name}`
+    },
+    uploadError: function(res) {
+      this.error = res
     }
   }
 };
@@ -117,6 +167,7 @@ export default {
 <style lang="scss" scoped>
 @import "../scss/_vars";
 
+/* eslint-disable */
 .layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -144,9 +195,9 @@ export default {
   box-shadow: 3px 3px 3px rgba(0,0,0,0.1);
   margin-bottom: 2rem;
 
-  &.result {
-    // grid-column: 1 / span 2;
-  }
+  // &.result {
+  //   // grid-column: 1 / span 2;
+  // }
 }
 
 .input {
@@ -175,7 +226,7 @@ export default {
 .error {
   font-size: 0.8rem;
   color: red;
-  margin-top: 0.5rem
+  margin-top: 0.5rem;
 }
 
 .btn {
@@ -200,11 +251,12 @@ export default {
 
   &:hover {
     background-color: #888;
-    color: white
+    color: white;
   }
 }
 
 .vue-dropzone {
+  height: 72%;
   .dropzone-custom-title {
     font-family: 'Noto Sans JP', sans-serif;
     font-weight: 400;
