@@ -36,7 +36,7 @@
       </div>
       <input class="input" type="hidden" name="imgurl" id="imgUrl" v-model="details.cxr_image">
       <div class="error" v-html="error"></div>
-      <button class="btn" type="submit" v-on:click="submit" v-if="!this.result.normal">Analyze</button>
+      <button class="btn" type="submit" v-on:click="submit" v-if="!result.normal" :disabled="!hasFile">Analyze</button>
     </section>
     
     <!-- <section id="step3" class="section" v-if="hasResult"> -->
@@ -97,7 +97,9 @@ export default {
       },
       error: '',
       result: {},
-      cookie: ''
+      cookie: '',
+      isMounted: false,
+      hasFile: false
     }
   },
   computed: {
@@ -184,10 +186,11 @@ export default {
     uploadComplete: function(file) {
       // console.log('complete:', file)
       this.details.cxr_image = `${this.bucket}/${this.folder}/${file.name}`
+      this.hasFile = true
     }
   },
   mounted: function() {
-    // this.login()
+    this.isMounted = true
   }
 };
 </script>
@@ -254,6 +257,7 @@ export default {
     cursor: pointer;
     padding-left: 1.5rem;
     z-index: 1;
+    color: #333;
 
     &:before, &:after {
       position: absolute;
@@ -345,6 +349,11 @@ export default {
   color: #333;
 
   cursor: pointer;
+
+  &:disabled {
+    opacity: 0.3;
+    pointer-events: none;
+  }
 
   &:hover {
     background-color: $blue;
