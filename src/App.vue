@@ -28,7 +28,7 @@
   top:0;
   left: 0;
   background-color: $ribbon-background-color;
-  color: $ribbon-stroke-color;
+  color: $blue;
   display: inline-block;
   width: $ribbon-tri-width;
   text-decoration: none;
@@ -54,8 +54,8 @@
 
 .ribbon-inner {
     display: block;
-    border-left: 1px solid $ribbon-stroke-color;
-    border-right: 1px solid $ribbon-stroke-color;
+    border-left: 1px solid $blue;
+    border-right: 1px solid $blue;
     position: relative;
     height: 100%;
     padding: 2rem 1rem;
@@ -81,7 +81,7 @@
 
 
     &:before {
-        border-color: $ribbon-stroke-color transparent transparent transparent;
+        border-color: $blue transparent transparent transparent;
         border-width: #{$ribbon-tri-height -$ribbon-tri-padding} #{($ribbon-tri-width / 2) - $ribbon-tri-padding} 0 #{($ribbon-tri-width / 2) - $ribbon-tri-padding};
         margin-top: 0;
     }
