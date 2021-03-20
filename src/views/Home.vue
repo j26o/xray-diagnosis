@@ -191,6 +191,7 @@ export default {
   },
   mounted: function() {
     this.isMounted = true
+    this.login()
   }
 };
 </script>
