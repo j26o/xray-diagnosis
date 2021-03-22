@@ -16,7 +16,7 @@
 #app {
   width: 100vw;
   max-width: 1200px;
-  min-height: 100vh;
+  min-height: calc(100vh - 1.5rem);
   margin: 0 auto;
   position: relative;
 

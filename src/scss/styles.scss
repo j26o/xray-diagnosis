@@ -29,3 +29,19 @@ button, input, textarea {
   }
 }
 
+.footer {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  height: 1rem;
+  font-size: 0.8rem;
+
+  &-wrap {
+    text-align: center;
+    color: grey;
+
+    a {color: grey}
+  }
+}
+
